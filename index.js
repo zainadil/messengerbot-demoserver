@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 
-app.use(express.bodyParser());
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
