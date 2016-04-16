@@ -10,7 +10,7 @@ app.get('/webhook/', function (req, res) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Error, wrong validation token');
-})
+});
 
 app.post('/webhook/', function (req, res) {
   console.log(" ****** Logging Body ******")
@@ -22,7 +22,6 @@ app.post('/webhook/', function (req, res) {
     sender = event.sender.id;
     if (event.message && event.message.text) {
       text = event.message.text;
-      console.log(text);
       sendTextMessage(sender, "Text received, echo: "+ text.substring(0, 200));
     }
   }
