@@ -8,6 +8,7 @@
   },
   "author": "Zain Adil",
   "license": "ISC",
+  "scripts": { "start": "node index.js"},
   "dependencies": {
     "express": "^4.13.4"
   }
