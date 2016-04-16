@@ -18,9 +18,6 @@ app.get('/webhook/', function (req, res) {
 });
 
 app.post('/webhook/', function (req, res) {
-  console.log(" ****** Logging Body ******")
-  console.log(req.body);
-  console.log(" ****** Logging Body ******")
   messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i];
@@ -28,6 +25,8 @@ app.post('/webhook/', function (req, res) {
     if (event.message && event.message.text) {
       text = event.message.text;
       sendTextMessage(sender, "Text received, echo: "+ text.substring(0, 200));
+      sendTextMessage(sender, "Hahahahah no way!!!");
+
     }
   }
   res.sendStatus(200);
