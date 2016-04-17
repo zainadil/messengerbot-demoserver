@@ -3,11 +3,34 @@ var app = express();
 var bodyParser  = require('body-parser');
 var request = require('request');
 
+const actions = {
+  say: (sessionId, context, message, cb) => {
+    console.log(message);
+    cb();
+  },
+  merge: (sessionId, context, entities, message, cb) => {
+    cb(context);
+  },
+  error: (sessionId, context, error) => {
+    console.log(error.message);
+  },
+};
+
+const Wit = require('node-wit').Wit;
+const client = new Wit(process.env.WIT_TOKEN, actions);
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
+  client.converse('user-session', 'Hi', {}, (error, data) => {
+    if (error) {
+      console.log('Oops! Got an error: ' + error);
+    } else {
+      console.log('Response: ' + JSON.stringify(data));
+    }
+  });
 });
 
 app.get('/webhook/', function (req, res) {
@@ -24,9 +47,13 @@ app.post('/webhook/', function (req, res) {
     sender = event.sender.id;
     if (event.message && event.message.text) {
       text = event.message.text;
-      sendTextMessage(sender, text.substring(0, 200));
+
+      //Understand the message and respond intelligently
+
       if(text === 'interesting'){
         sendGenericMessge(sender)
+      } else {
+        sendTextMessage(sender, text.substring(0, 200));
       }
     }
   }
@@ -94,6 +121,27 @@ function sendMessage(sender, messageData) {
   });
 }
 
-app.listen(process.env.PORT, function () {
-  console.log('Example app listening');
+PORT = process.env.PORT || 4000
+app.listen(PORT, function () {
+  console.log('Example app listening on port: ' + PORT);
 });
+
+function askWitAi(question) {
+  request({
+      url: 'https://api.wit.ai/message',
+      method: 'GET',
+      json: true,
+      headers: {
+        'Authorization': 'Bearer ' + 'G3Z23QTGXVDE2IVNLRKO7BGGIHXKQH3P',
+      },
+      qs: { q:question}
+    }, function (error, response, body) {
+      if (error) {
+        console.log('Error sending message: ', error);
+      } else if (response.body.error) {
+        console.log('Error: ', response.body.error);
+      } else {
+        console.log(response.body)
+      }
+    });
+}
